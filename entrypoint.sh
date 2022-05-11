@@ -6,6 +6,5 @@ exec ss-server \
       -k 'This|s@+free_te5t~9527' \
       -m 'chacha20-ietf-poly1305' \
       -t 300 \
-      -6 \
       -d '1.0.0.1' \
       --reuse-port
