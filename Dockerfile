@@ -5,7 +5,7 @@
 FROM alpine
 
 ENV SERVER_ADDR 0.0.0.0
-ENV SERVER_PORT 443
+ENV SERVER_PORT 59472
 ENV TZ UTC
 
 RUN set -ex \
@@ -19,6 +19,7 @@ RUN set -ex \
  && tar -xf ./v2* \
  && mv ./v2ray-plugin_* /usr/bin/v2ray-plugin \
  && setcap 'cap_net_bind_service=+ep' /usr/bin/ssserver \
+ && setcap 'cap_net_bind_service=+ep' /usr/bin/v2ray-plugin \
  && apk del .build-deps \
  && rm -rf /tmp/*
 
