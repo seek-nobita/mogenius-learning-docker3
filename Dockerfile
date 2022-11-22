@@ -17,7 +17,7 @@ RUN set -ex \
  && curl -sLO `curl -s https://api.github.com/repos/shadowsocks/v2ray-plugin/releases/latest | grep -E '.+browser.+linux-amd64.+z"' | cut -d\" -f4` \
  && tar -xf ./shadows* ssserver -C /usr/bin \
  && tar -xf ./v2* \
- && mv ./v2ray-plugin_* /usr/bin/ \
+ && mv ./v2ray-plugin_* /usr/bin/v2ray-plugin \
  && setcap 'cap_net_bind_service=+ep' /usr/bin/ssserver \
  && apk del .build-deps \
  && rm -rf /tmp/*
