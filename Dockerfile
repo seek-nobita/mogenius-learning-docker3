@@ -1,5 +1,5 @@
 #
-# Dockerfile for shadowsocks-libev
+# Dockerfile for shadowsocks-rust
 #
 
 FROM alpine
@@ -9,36 +9,17 @@ ENV SERVER_PORT 443
 ENV TZ UTC
 
 RUN set -ex \
- # Build environment setup
  && apk add --no-cache --virtual .build-deps \
-      autoconf \
-      automake \
-      build-base \
-      c-ares-dev \
+      curl \
       libcap \
-      libev-dev \
-      libtool \
-      libsodium-dev \
-      linux-headers \
-      mbedtls-dev \
-      pcre-dev \
-      git \
  && cd /tmp \
- && git clone https://github.com/shadowsocks/shadowsocks-libev.git \
- && cd shadowsocks-libev \
- && git submodule update --init --recursive \
- && ./autogen.sh \
- && ./configure --prefix=/usr --disable-documentation \
- && make install \
- && ls /usr/bin/ss-* | xargs -n1 setcap cap_net_bind_service+ep \
+ && curl -sLO `curl -s https://api.github.com/repos/shadowsocks/shadowsocks-rust/releases/latest | grep -E '.+browser.+x86_64-unknown-linux-musl.+z"' | cut -d\" -f4` \
+ && curl -sLO `curl -s https://api.github.com/repos/shadowsocks/v2ray-plugin/releases/latest | grep -E '.+browser.+linux-amd64.+z"' | cut -d\" -f4` \
+ && tar -xf ./shadows* ssserver -C /usr/bin \
+ && tar -xf ./v2* \
+ && mv ./v2ray-plugin_* /usr/bin/ \
+ && setcap 'cap_net_bind_service=+ep' /usr/bin/ssserver \
  && apk del .build-deps \
- && apk add --no-cache \
-      ca-certificates \
-      rng-tools \
-      tzdata \
-      $(scanelf --needed --nobanner /usr/bin/ss-* \
-      | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
-      | sort -u) \
  && rm -rf /tmp/*
 
 USER nobody
